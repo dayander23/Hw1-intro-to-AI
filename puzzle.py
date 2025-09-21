@@ -105,31 +105,28 @@ def bfs(initial_state):
 
 
 # DFS
-def dfs(initial_state, limit=50):
-    start_time = time.time()
-    visited = set()
-    stack = [(initial_state, "", 0)]
-    visited.add(state_to_tuple(initial_state))
-    nodes_expanded = 0
+def dfs(state, depth=0, max_depth=20, visited=None):
+    if visited is None:
+        visited = set()
 
-    while stack:
-        state, path, depth = stack.pop()
-        nodes_expanded += 1
+    # Check if goal reached
+    if state == GOAL_STATE:
+        return [], 1, 0, 0
 
-        if is_goal(state):
-            end_time = time.time()
-            memory_used = psutil.Process(os.getpid()).memory_info().rss // 1024
-            return path, nodes_expanded, (end_time - start_time) * 1000, memory_used
+    # Stop if hit max depth limit
+    if depth >= max_depth:
+        return None, 0, 0, 0
 
-        if depth < limit:
-            for move in MOVES:
-                new_state = move_blank(state, move)
-                if new_state and state_to_tuple(new_state) not in visited:
-                    visited.add(state_to_tuple(new_state))
-                    stack.append((new_state, path + move, depth + 1))
+    visited.add(state_to_tuple(state))
 
-    return None, nodes_expanded, None, None
+    for move in MOVES:
+        new_state = move_blank(state, move)
+        if new_state and state_to_tuple(new_state) not in visited:
+            result, nodes, t, mem = dfs(new_state, depth + 1, max_depth, visited)
+            if result is not None:  # Found solution
+                return [move] + result, nodes + 1, t, mem
 
+    return None, 0, 0, 0  # No solution found within limit
 
 # A* Search
 def astar(initial_state, heuristic):
