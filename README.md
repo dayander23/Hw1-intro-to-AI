@@ -8,8 +8,7 @@ The goal is to move the blank space (0) until the board matches the solved confi
 
 How to Run
 Make sure you have Python 3 installed.
-Install the only extra library we used (for measuring memory):
-pip install psutil
+
 Save the code in a file called puzzle.py.
 Run the program:
 python puzzle.py
